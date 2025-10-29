@@ -5,13 +5,12 @@ export default defineConfig({
   // Server configuration
   server: {
     // Configure allowed hosts for security
-    // By default, only localhost and 127.0.0.1 are allowed
-    // This will block requests from other hosts like JetBrains remote URLs
+    // Define which hosts are allowed to access the server
     allowedHosts: [
       'localhost',
       '127.0.0.1',
       // To allow the JetBrains remote host, uncomment the line below:
-      // 'cbz-dpbz-mvo.app.eu-west-1.matter.jetbrains.ai',
+      // 'ojj-gbub-ohh.app.eu-west-1.matter.jetbrains.ai',
     ],
     
     cors: {
@@ -19,13 +18,38 @@ export default defineConfig({
     },
     middlewareMode: false,
     configureServer(server) {
+      // Middleware to check Host header and block unauthorized hosts
       server.middlewares.use((req, res, next) => {
+        const host = req.headers.host
+        const allowedHosts = [
+          'localhost',
+          '127.0.0.1',
+          'localhost:5173', // Vite's default port
+          '127.0.0.1:5173',
+          // Uncomment to allow JetBrains remote URL:
+          // 'ojj-gbub-ohh.app.eu-west-1.matter.jetbrains.ai',
+        ]
+        
+        // Check if the host is in the allowed list
+        const isAllowed = allowedHosts.some(allowedHost => 
+          host === allowedHost || host?.startsWith(allowedHost + ':')
+        )
+        
+        if (!isAllowed && host) {
+          res.statusCode = 403
+          res.setHeader('Content-Type', 'text/plain')
+          res.end(`Blocked request. This host ("${host}") is not allowed.\nTo allow this host, add "${host}" to \`server.allowedHosts\` in vite.config.js.`)
+          return
+        }
+        
+        // Original origin check
         const origin = req.headers.origin
         if (origin && !origin.includes('lovely')) {
           res.statusCode = 403
           res.end('Access denied: host not allowed.')
           return
         }
+        
         next()
       })
     },

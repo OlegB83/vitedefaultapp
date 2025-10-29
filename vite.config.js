@@ -4,6 +4,16 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   // Server configuration
   server: {
+    // Configure allowed hosts for security
+    // By default, only localhost and 127.0.0.1 are allowed
+    // This will block requests from other hosts like JetBrains remote URLs
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      // To allow the JetBrains remote host, uncomment the line below:
+      // 'cbz-dpbz-mvo.app.eu-west-1.matter.jetbrains.ai',
+    ],
+    
     cors: {
       origin: /^https?:\/\/(www\.)?lovely(\.com)?$/,
     },

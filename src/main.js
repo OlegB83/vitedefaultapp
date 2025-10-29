@@ -3,14 +3,6 @@ import javascriptLogo from './javascript.svg'
 import viteLogo from '/vite.svg'
 import { setupCounter } from './counter.js'
 
-// Error 1: ReferenceError - accessing undefined variable
-console.log(undefinedVariable.property)
-
-// Error 2: Attempting to use a non-existent function
-setTimeout(() => {
-  nonExistentFunction()
-}, 2000)
-
 document.querySelector('#app').innerHTML = `
   <div>
     <a href="https://vite.dev" target="_blank">
@@ -29,8 +21,20 @@ document.querySelector('#app').innerHTML = `
   </div>
 `
 
-// Error 3: TypeError - calling method on null
-const nullElement = document.querySelector('#nonexistent')
-nullElement.addEventListener('click', () => {})
-
 setupCounter(document.querySelector('#counter'))
+
+// Error 1: ReferenceError - delayed so page can load first
+setTimeout(() => {
+  console.log(undefinedVariable.property)
+}, 2000)
+
+// Error 2: Attempting to use a non-existent function
+setTimeout(() => {
+  nonExistentFunction()
+}, 4000)
+
+// Error 3: TypeError - calling method on null (delayed)
+setTimeout(() => {
+  const nullElement = document.querySelector('#nonexistent')
+  nullElement.addEventListener('click', () => {})
+}, 6000)

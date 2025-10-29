@@ -4,8 +4,21 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   // Server configuration
   server: {
-    port: 3000,
-    open: true,
+    cors: {
+      origin: /^https?:\/\/(www\.)?lovely(\.com)?$/,
+    },
+    middlewareMode: false,
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const origin = req.headers.origin
+        if (origin && !origin.includes('lovely')) {
+          res.statusCode = 403
+          res.end('Access denied: host not allowed.')
+          return
+        }
+        next()
+      })
+    },
   },
   
   // Build configuration

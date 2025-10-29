@@ -6,8 +6,6 @@ export default defineConfig({
   server: {
     port: 3000,
     open: true,
-    allowedHosts: true,// Automatically open the app in browser
-    host: true, // Allow access from network
   },
   
   // Build configuration
